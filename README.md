@@ -1,2 +1,5 @@
 # Advanced Lane Finding
- Udacity Self-Driving Car Nanodegree
+
+This is my solution for the great Udacity Self-Driving Car Nanodegree.
+
+[Writeup](doc/writeup.md)
