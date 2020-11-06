@@ -20,8 +20,11 @@ The goals / steps of this project are the following:
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
+
 #### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.
 Its this document.
+
+---
 
 ### Architecture
 I created a few classes and files to manage the complexity. The ones worth mentioning are:
@@ -44,6 +47,7 @@ The calibration happens in Camera.calibrate() function as described:
 
 Apart from the required steps I also added a `Camera.save()` and `Camera.load()` function to load/save calibration and perspective correction matrices to camera_calib.json file. If it finds this file, it skips the calibration. I did this to reduce the time requirement of development iterations. Delete the file if you want to force re-running the calibration. For details see `Camera.__init__()`.
 
+---
 ### Pipeline (both single images and videos)
 In `main.py` the `process_still_images()` function iterates over all images and sends them to image processor (stills only).
 
@@ -54,6 +58,8 @@ In `Camera.undistort()` the previously stored camera matrix and distortion coeff
 
 ![Undistorted calibration image](undistorted.jpg)
 Notice the black pixels in the bottom-left corner.
+
+---
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 See `combined_threshold_4()` function in `preprocess_helpers.py` file. I decided to use the value of 255 instead of 1, because this way I was able to use OpenCV Image Viewer plugin in PyCharm to view data as an image.
@@ -68,10 +74,13 @@ As a final step I combined the two datasets to one with logical `or`, resulting 
 The image is from the OpenCV Image Viewer plugin, which displays it in BGR order. This explains the swapped colors if you compare it to the code. <BR>
 Note: you can also notice the effect of camera distortion removal. See the black bars in the bottom-left and top-left corners.
 
+
+---
+
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 First I determined the transformation matrix and the the matrix for reverse transformation, then applied those matrices to actual images when needed.
 
-**Step 1**
+**Step 3.1**
 First I selected four source points on the image as shown below. Their coordinates are:
 
     CFG['perspective_calib_pts'] = np.float32([[217, 719], [593, 450], [689, 450], [1112, 719]])
@@ -85,7 +94,7 @@ Note: if you want to regenerate the transformation matrices, delete the `camera_
 
 I used `cv2.getPerspectiveTransform()` function inside `get_perspective_transform()` to generate both the forward and inverse matrices, which were later saved to file.
 
-**Step 2**
+**Step 3.2**
 I applied the perspective transform in the `warp()` function in `preprocess_helpers.py`. 
 Before Warp:
 ![Before Warp](before_warp.png)
@@ -93,6 +102,8 @@ Before Warp:
 After Warp:
 ![After Warp](after_warp.png)
 Note: these are not actual images from the input folder. I generated them only for this documentation. Below you will see actual examples.
+
+---
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 I used two methods for finding lane pixels:
@@ -103,6 +114,8 @@ I used two methods for finding lane pixels:
 
 The function returns the found points to `ImageProcessor.do()` which later passes them to `fit_polynomial()` function (`in preprocess_helpers.py`). It finds second degree polynomials for both lines, and returns their coefficients.
 
+---
+
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 Radius of curvature is calculated in `measure_radius_m()` function in `preprocess_helpers.py` with the following equation:
 
@@ -112,17 +125,22 @@ To get the car's offset from the lane center I calculated the values of polynoms
 
 For unit conversions I assumed a lane width of 3.7 meters and estimated the length of the relevant are to be 30 meters. For real-word usage these values should and can easily be measured with the actual camera and car setup.
 
+---
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 Once the left and right lane polynomials were found the `draw_polys_inplay()` (`in preprocess_helpers.py`) was called to display the green overlay. It does it by calling cv2.fillPoly() after converting the data to the required format.
 
-![Poly on road](test2)
+![Poly on road](test2.jpg)
+
+---
 
 #### 7. Extra: verbose mode
 The majority of the information gathered in the above steps can be drawn over the image. To do this set `verbose` to `True` in the first line of `ImageProcessor.do()`
 
 Example image with verbose mode ON:
-![Overlay](overlay)
+![Overlay](overlay.jpg)
+
+---
 
 #### 8. Extra: sanity checks
 `ImageProcessor.sanity_checks()` function performs the following sanity checks:
