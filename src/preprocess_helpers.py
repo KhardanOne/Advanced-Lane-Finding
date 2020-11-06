@@ -234,9 +234,11 @@ def combined_threshold_4(color_img, show_dbg=False):
     sxbinary[(scaled_sobel >= thresh_min) & (scaled_sobel <= thresh_max)] = 255
 
     # Threshold color channel
-    s_thresh_min, s_thresh_max = 170, 255
+    s_thresh_min, s_thresh_max = 40, 255
     s_binary = np.zeros_like(s_channel)
-    s_binary[(s_channel >= s_thresh_min) & (s_channel <= s_thresh_max)] = 255
+    s_sobelx = cv2.Sobel(s_channel, cv2.CV_64F, 1, 0)
+    s_abs_sobelx = np.absolute(s_sobelx)
+    s_binary[(s_abs_sobelx >= s_thresh_min) & (s_abs_sobelx <= s_thresh_max)] = 255
 
     # Stack each channel to view their individual contributions in green and blue respectively
     # This returns a stack of the two binary images, whose components you can see as different colors
@@ -244,7 +246,7 @@ def combined_threshold_4(color_img, show_dbg=False):
 
     # Combine the two binary thresholds
     combined_binary = np.zeros_like(sxbinary)
-    combined_binary[(s_binary == 255) | (sxbinary == 255)] = 1
+    combined_binary[(s_binary == 255) | (sxbinary == 255)] = 255
 
     # Plotting thresholded images
     if show_dbg:
@@ -315,7 +317,7 @@ def find_lane_pixels_sliding_window(binary_warped_img, show_dbg=False):
     verbose = True
     img_width = binary_warped_img.shape[1]
     # Take a histogram of the bottom half of the image
-    histogram = np.sum(binary_warped_img[binary_warped_img.shape[0] // 2:, :], axis=0)
+    histogram = np.sum(binary_warped_img[binary_warped_img.shape[0] // 2:, :], axis=0) // 255
 
     # Create an output image to draw on and visualize the result
     out_img = np.dstack((binary_warped_img, binary_warped_img, binary_warped_img)) * 255
