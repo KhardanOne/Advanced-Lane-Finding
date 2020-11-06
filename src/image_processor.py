@@ -79,7 +79,7 @@ class ImageProcessor:
 
     @classmethod
     def do(cls, img, show_dbg=False):
-        verbose = True
+        verbose = False  ################################################################################################ set to False to hide debug overlay
         # orig perspective
         img_undistorted = cls.camera.undistort(img)
         img_extd = extend(img_undistorted)

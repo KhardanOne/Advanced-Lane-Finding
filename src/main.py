@@ -49,8 +49,8 @@ def process_video(video_path):
 
     basename = os.path.basename(video_path)
     outpath = CFG['videos_out_dir'] + basename
-    clip = VideoFileClip(video_path, audio=False).subclip(38, 43)  ################################ TODO: use full videos
-    #clip = VideoFileClip(video_path, audio=False)
+    #clip = VideoFileClip(video_path, audio=False).subclip(0, 10)  ################################ TODO: use full videos
+    clip = VideoFileClip(video_path, audio=False)
 
     # Reinit for each video of possible different image sizes
     histories = (LineHistory('left'), LineHistory('right'))
@@ -71,15 +71,15 @@ def main():
                               show_dbg=True,
                               )
     # Uncomment this to generate camera calibration test images:
-    #GLOBAL['camera'].generate_test_images(CFG['calibration_image_path'], CFG['calibration_test_target_dir'])
+    # GLOBAL['camera'].generate_test_images(CFG['calibration_image_path'], CFG['calibration_test_target_dir'])
 
-    img_source = mpimg.imread('../input/road_images/test4.jpg')
+    img_source = mpimg.imread('../input/road_images/test4.jpg')  # this is used only to determine image shape
     ImageProcessor.init((img_source.shape[1], img_source.shape[0]), GLOBAL['camera'], show_dbg=True)
 
-    #process_still_images()
+    process_still_images()
     process_video(CFG['videos_dir'] + 'project_video.mp4')
-    #process_video(CFG['videos_dir'] + 'challenge_video.mp4')
-    #process_video(CFG['videos_dir'] + 'harder_challenge_video.mp4')
+    # process_video(CFG['videos_dir'] + 'challenge_video.mp4')
+    # process_video(CFG['videos_dir'] + 'harder_challenge_video.mp4')
 
 
 if __name__ == '__main__':
